@@ -10,6 +10,7 @@
 const EventEmitter = require('events').EventEmitter;
 const Slack = require('slack-node');
 const io = require('socket.io-client');
+const userModule = require('./User');
 
 /**
  * Forum connector
@@ -32,6 +33,7 @@ class Forum extends EventEmitter {
     	this._config = config;
     	this._plugins = [];
     	this._slack = new Slack(config.core.apiToken);
+    	this._userModule = userModule.bindUser(this);
     }
 
     get Slack() {
@@ -50,7 +52,7 @@ class Forum extends EventEmitter {
      * @type {object}
      */
     get config() {
-        return _config;
+        return this._config;
     }
 
 
@@ -96,7 +98,7 @@ class Forum extends EventEmitter {
      * @type {User}
      */
     get user() {
-        throw new Error("Not yet implemented");
+        return this._userModule;
     }
 
     /**
@@ -142,7 +144,7 @@ class Forum extends EventEmitter {
      * @fulfill {Forum} Logged in forum
      */
     login() {
-        return Promise.reject("not yet implemented");
+        return Promise.resolve();
     }
 
 	/**
@@ -185,16 +187,16 @@ class Forum extends EventEmitter {
      * @returns {Promise} Resolves when all plugins have been enabled
      */
     activate() {
-        return Promise.reject("not yet implemented");
+        let that = this;
         return new Promise(function(resolve, reject) {
-        	this.Slack.api('rtm.start', function(err, apiResponse) {
-	        	this.socket = io(apiResponse.url);
-		        this.socket.on('pong', (data) => this.emit('log', `Ping exchanged with ${data}ms latency`));
-		        this.socket.on('connect', () => this.emit('connect'));
-		        this.socket.on('disconnect', () => this.emit('disconnect'));
-		        this.socket.once('connect', () => resolve());
-		        this.socket.once('error', (err) => reject(err));
-	        })
+        	that.Slack.api('rtm.start', function(err, apiResponse) {
+            	that.socket = io(apiResponse.url);
+    	        that.socket.on('pong', (data) => this.emit('log', `Ping exchanged with ${data}ms latency`));
+    	        that.socket.on('connect', () => this.emit('connect'));
+    	        that.socket.on('disconnect', () => this.emit('disconnect'));
+    	        that.socket.once('connect', () => resolve());
+    	        that.socket.once('error', (err) => reject(err));
+            })
         }).then(() => {
             return Promise.all(this._plugins.map((plugin) => plugin.activate()));
         });
