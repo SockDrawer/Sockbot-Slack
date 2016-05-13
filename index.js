@@ -9,6 +9,7 @@
 
 const EventEmitter = require('events').EventEmitter;
 const Slack = require('slack-node');
+const io = require('socket.io-client');
 
 /**
  * Forum connector
@@ -17,7 +18,8 @@ const Slack = require('slack-node');
  */
 class Forum extends EventEmitter {
 
-	let _config, 
+	let _config,
+	_plugins,
 	Slack;
 
 	/**
@@ -31,7 +33,11 @@ class Forum extends EventEmitter {
      */
     constructor(config, useragent) {
     	_config = config;
-    	slack = new Slack(config.core.apiToken);
+    	Slack = new Slack(config.core.apiToken);
+    }
+
+    get Slack() {
+    	return Slack;
     }
 
      /**
@@ -125,7 +131,7 @@ class Forum extends EventEmitter {
         return Promise.reject("not yet implemented");
     }
 
-/**
+	/**
      * Add a plugin to this forum instance
      *
      * @public
@@ -139,7 +145,24 @@ class Forum extends EventEmitter {
      * @reject {Error} Generated plugin is invalid
      */
     addPlugin(fnPlugin, pluginConfig) {
-       return Promise.reject("not yet implemented");
+       return new Promise((resolve, reject) => {
+            let fn = fnPlugin;
+            if (typeof fn !== 'function') {
+                fn = fn.plugin;
+            }
+            const plugin = fn(this, pluginConfig);
+            if (typeof plugin !== 'object') {
+                return reject('[[invalid_plugin:no_plugin_object]]');
+            }
+            if (typeof plugin.activate !== 'function') {
+                return reject('[[invalid_plugin:no_activate_function]]');
+            }
+            if (typeof plugin.deactivate !== 'function') {
+                return reject('[[invalid_plugin:no_deactivate_function]]');
+            }
+            this._plugins.push(plugin);
+            return resolve();
+        });
     }
 
     /**
@@ -149,6 +172,17 @@ class Forum extends EventEmitter {
      */
     activate() {
         return Promise.reject("not yet implemented");
+        return new Promise(function(resolve, reject) {
+        	this.Slack.api('rtm.start', function(err, apiResponse) {
+	        	this.socket = io(apiResponse.url);
+		        this.socket.on('pong', (data) => this.emit('log', `Ping exchanged with ${data}ms latency`));
+		        this.socket.on('connect', () => this.emit('connect'));
+		        this.socket.on('disconnect', () => this.emit('disconnect'));
+		        this.socket.once('connect', () => resolve());
+		        this.socket.once('error', (err) => reject(err));
+	        })
+        });
+
     }
 
      /**

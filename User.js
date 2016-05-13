@@ -206,27 +206,17 @@ exports.bindUser = function bindUser(forum) {
          *
          */
         static get(userId) {
-            debug(`retrieving user by id: ${userId}`);
-            return forum.fetchObject('user.getUserByUID', userId, User.parse);
-        }
-
-        /**
-         * Get User by username
-         *
-         * @static
-         * @public
-         *
-         * @param {!string} username Username of the user to retrieve
-         * @returns {Promise<User>} Resolves to the retrieved User
-         *
-         * @promise
-         * @fulfill {User} The retrieved User
-         * @reject {Error} An Error that occured while processing
-         *
-         */
-        static getByName(username) {
-            debug(`retrieving user by login ${username}`);
-            return forum.fetchObject('user.getUserByUsername', username, User.parse);
+            return new Promise((resolve, reject) => {
+            	forum.Slack.api("users.info", {
+            		user: userId
+	            }, function(err, response) {
+	            	if (err) {
+	            		reject(err);
+	            	} else {
+	            		resolve(new User(response.user));
+	            	}
+				});
+            });
         }
 
         /**
