@@ -190,6 +190,9 @@ class Forum extends EventEmitter {
         let that = this;
         return new Promise(function(resolve, reject) {
         	that.Slack.api('rtm.start', function(err, apiResponse) {
+        	    if (err) {
+        	        reject(err);
+        	    }
             	that.socket = io(apiResponse.url);
     	        that.socket.on('pong', (data) => this.emit('log', `Ping exchanged with ${data}ms latency`));
     	        that.socket.on('connect', () => this.emit('connect'));
