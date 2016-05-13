@@ -1,0 +1,17 @@
+{
+  "name": "sockbot-slack",
+  "version": "1.0.0",
+  "description": "A Slack providor for Sockbot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo Not yet implemented"
+  },
+  "keywords": [
+    "Sockbot"
+  ],
+  "author": "yamikuronue",
+  "license": "MIT",
+  "dependencies": {
+    "slack-node": "^0.2.0"
+  }
+}
