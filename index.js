@@ -18,10 +18,6 @@ const io = require('socket.io-client');
  */
 class Forum extends EventEmitter {
 
-	let _config,
-	_plugins,
-	Slack;
-
 	/**
      * Create a forum connector instance
      *
@@ -32,8 +28,9 @@ class Forum extends EventEmitter {
      * @param {string} useragent Useragent to use for all requests
      */
     constructor(config, useragent) {
-    	_config = config;
-    	Slack = new Slack(config.core.apiToken);
+    	this._config = config;
+    	this._plugins = {};
+    	this.Slack = new Slack(config.core.apiToken);
     }
 
     get Slack() {
@@ -181,6 +178,8 @@ class Forum extends EventEmitter {
 		        this.socket.once('connect', () => resolve());
 		        this.socket.once('error', (err) => reject(err));
 	        })
+        }).then(() => {
+            return Promise.all(this._plugins.map((plugin) => plugin.activate()));
         });
 
     }
