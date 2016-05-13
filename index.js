@@ -195,3 +195,4 @@ class Forum extends EventEmitter {
 
 
 }
+module.exports = Forum;
