@@ -22,12 +22,6 @@ exports.bindUser = function bindUser(forum) {
      */
     class User {
 
-    	//Actual properties of the user go here. Everything else is undefined. 
-    	let _id, 
-    		_username,
-    		_name,
-    		_email;
-
 		/**
          * Construct a User object from payload
          *
@@ -40,11 +34,11 @@ exports.bindUser = function bindUser(forum) {
          * @param {*} payload Payload to construct the User object out of
          */
         constructor(payload) {
-            payload = utils.parseJSON(payload);
-            	_id = payload.id;
-            	_username = payload.name;
-            	_name = payload.profile.real_name;
-            	_email = payload.profile.email;
+            payload = JSON.parse(payload);
+            	this._id = payload.id;
+            	this._username = payload.name;
+            	this._name = payload.profile.real_name;
+            	this._email = payload.profile.email;
         }
 
         /**
@@ -217,6 +211,39 @@ exports.bindUser = function bindUser(forum) {
 	            	}
 				});
             });
+        }
+
+         /**
+         * Get User by username
+         *
+         * @static
+         * @public
+         *
+         * @param {!string} username Username of the user to retrieve
+         * @returns {Promise<User>} Resolves to the retrieved User
+         *
+         * @promise
+         * @fulfill {User} The retrieved User
+         * @reject {Error} An Error that occured while processing
+         *
+         */
+        static getByName(username) {
+            debug(`retrieving user by login ${username}`);
+            return new Promise((resolve, reject) => {
+	           	forum.Slack.api("users.list", function(err, respose) {
+	           		if (err) {
+	            		reject(err);
+	            	} else {
+	            		let members = JSON.parse(response).members;
+	            		for (let i = 0; i < members.length; i++) {
+	            			if (members[i].name == username) {
+	            				resolve(new User(members[i]));
+	            			}
+	            		}
+	            		reject("No such user");
+	            	}
+	           	})
+	        });
         }
 
         /**
