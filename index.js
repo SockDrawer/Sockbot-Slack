@@ -28,13 +28,18 @@ class Forum extends EventEmitter {
      * @param {string} useragent Useragent to use for all requests
      */
     constructor(config, useragent) {
+        super();
     	this._config = config;
-    	this._plugins = {};
-    	this.Slack = new Slack(config.core.apiToken);
+    	this._plugins = [];
+    	this._slack = new Slack(config.core.apiToken);
     }
 
     get Slack() {
-    	return Slack;
+    	return this._slack;
+    }
+    
+    set Slack(s) {
+        this._slack = s;
     }
 
      /**
@@ -105,7 +110,7 @@ class Forum extends EventEmitter {
         return this._config.core.owner;
     }
 
-    /**
+ /**
      * Get Commands object bound to this instance
      *
      * @public
@@ -113,8 +118,20 @@ class Forum extends EventEmitter {
      * @type {Commands}
      */
     get Commands() {
-        throw new Error("Not yet implemented");
+        return this._commands;
     }
+
+    /**
+     * Store Commands object bound to this instance
+     *
+     * @private
+     *
+     * @param {Commands} commands commands Instance
+     */
+    set Commands(commands) {
+        this._commands = commands;
+    }
+
 
     /**
      * Login to forum instance
