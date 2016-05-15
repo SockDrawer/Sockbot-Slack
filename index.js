@@ -8,9 +8,12 @@
  */
 
 const EventEmitter = require('events').EventEmitter;
-const Slack = require('slack-node');
+const SlackBot = require('slackbots');
 const io = require('socket.io-client');
 const userModule = require('./User');
+const debug = require('debug')('sockbot:providers:slack');
+const notifications = require('./Notifications');
+
 
 /**
  * Forum connector
@@ -32,8 +35,8 @@ class Forum extends EventEmitter {
         super();
     	this._config = config;
     	this._plugins = [];
-    	this._slack = new Slack(config.core.apiToken);
     	this._userModule = userModule.bindUser(this);
+    	this._notification = notifications.bindNotification(this);
     }
 
     get Slack() {
@@ -144,7 +147,16 @@ class Forum extends EventEmitter {
      * @fulfill {Forum} Logged in forum
      */
     login() {
-        return Promise.resolve();
+        let that = this;
+         return new Promise(function(resolve, reject) {
+             
+            that._slack = new SlackBot({
+                token: that._config.core.apiToken, // Add a bot https://my.slack.com/services/new/bot and put the token  
+                name: that._config.core.username
+            });
+            
+            that._slack.on('start', resolve);
+        });
     }
 
 	/**
@@ -187,20 +199,7 @@ class Forum extends EventEmitter {
      * @returns {Promise} Resolves when all plugins have been enabled
      */
     activate() {
-        let that = this;
-        return new Promise(function(resolve, reject) {
-        	that.Slack.api('rtm.start', function(err, apiResponse) {
-        	    if (err) {
-        	        reject(err);
-        	    }
-            	that.socket = io(apiResponse.url);
-    	        that.socket.on('pong', (data) => this.emit('log', `Ping exchanged with ${data}ms latency`));
-    	        that.socket.on('connect', () => this.emit('connect'));
-    	        that.socket.on('disconnect', () => this.emit('disconnect'));
-    	        that.socket.once('connect', () => resolve());
-    	        that.socket.once('error', (err) => reject(err));
-            })
-        }).then(() => {
+        return this._notification.activate().then(() => {
             return Promise.all(this._plugins.map((plugin) => plugin.activate()));
         });
 

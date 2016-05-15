@@ -5,6 +5,9 @@
  * @author Yamikuronue
  * @license MIT
  */
+ 
+ const debug = require('debug')('sockbot:providers:slack:users');
+
 
 /**
  * Create a User class and bind it to a forum instance
@@ -49,7 +52,7 @@ exports.bindUser = function bindUser(forum) {
          * @type {!number}
          */
         get id() {
-            return _id;
+            return this._id;
         }
 
         /**
@@ -60,7 +63,7 @@ exports.bindUser = function bindUser(forum) {
          * @type {!string}
          */
         get username() {
-            return _username;
+            return this._username;
         }
 
         /**
@@ -71,7 +74,7 @@ exports.bindUser = function bindUser(forum) {
          * @type {?string}
          */
         get email() {
-            return _email;
+            return  this._email;
         }
 
         /**
@@ -230,7 +233,7 @@ exports.bindUser = function bindUser(forum) {
         static getByName(username) {
             debug(`retrieving user by login ${username}`);
             return new Promise((resolve, reject) => {
-	           	forum.Slack.api("users.list", function(err, respose) {
+	           	forum.Slack.api("users.list", function(err, response) {
 	           		if (err) {
 	            		reject(err);
 	            	} else {
@@ -242,7 +245,7 @@ exports.bindUser = function bindUser(forum) {
 	            		}
 	            		reject("No such user");
 	            	}
-	           	})
+	           	});
 	        });
         }
 
@@ -265,4 +268,4 @@ exports.bindUser = function bindUser(forum) {
         }
     }
     return User;
-}
+};

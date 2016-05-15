@@ -16,8 +16,6 @@ const debug = require('debug')('sockbot:providers:slack:notifications');
  */
 exports.bindNotification = function bindNotification(forum) {
 
-    const mentionTester = new RegExp(`(^|\\s)@${forum.username}(\\s|$)`, 'i');
-
     /**
      * Notification types enum
      *
@@ -30,7 +28,7 @@ exports.bindNotification = function bindNotification(forum) {
         mention: 'mention'
     };
 
-    const mappedTypes = ['message']
+    const mappedTypes = ['message'];
 
     /**
      * Notification Class
@@ -52,13 +50,10 @@ exports.bindNotification = function bindNotification(forum) {
          * @param {*} payload Payload to construct the Notification object out of
          */
         constructor(payload) {
-            payload = JSON.parse(payload);
-
-            this.body = payload.text;
-            this.type = 'message';
-            this.user = payload.user;
+            this._body = payload.text;
+            this._type = 'message';
+            this._user = payload.user;
             
-            utils.mapSet(this, values);
         }
 
         /**
@@ -69,7 +64,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {string}
          */
         get id() {
-            return utils.mapGet(this, 'id');
+            return 0;
         }
 
         /**
@@ -80,7 +75,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {number}
          */
         get postId() {
-            return utils.mapGet(this, 'postId');
+            return 0;
         }
 
         /**
@@ -91,7 +86,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {number}
          */
         get topicId() {
-            return utils.mapGet(this, 'topicId');
+            return 0;
         }
 
         /**
@@ -102,7 +97,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {number}
          */
         get userId() {
-            return utils.mapGet(this, 'userId');
+            return 0;
         }
 
         /**
@@ -113,7 +108,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {notificationType}
          */
         get type() {
-            return utils.mapGet(this, 'type');
+            return this._type;
         }
 
         /**
@@ -124,7 +119,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {string}
          */
         get subtype() {
-            return utils.mapGet(this, 'subtype');
+            return this._type;
         }
 
         /**
@@ -135,7 +130,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {boolean}
          */
         get read() {
-            return utils.mapGet(this, 'read');
+            return true;
         }
 
         /**
@@ -146,7 +141,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {Date}
          */
         get date() {
-            return utils.mapGet(this, 'date');
+            return 0;
         }
 
         /**
@@ -157,7 +152,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {string}
          */
         get label() {
-            return utils.mapGet(this, 'label');
+            return 0;
         }
 
         /**
@@ -168,7 +163,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {string}
          */
         get body() {
-            return utils.mapGet(this, 'body');
+            return this._body;
         }
 
         /**
@@ -183,9 +178,9 @@ exports.bindNotification = function bindNotification(forum) {
          */
         getText() {
             if (this.type === 'mention') {
-                return forum.Post.preview(this.body);
+                return forum.Post.preview(this._body);
             }
-            return Promise.resolve(this.body);
+            return Promise.resolve(this._body);
         }
 
         /**
@@ -199,8 +194,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @fullfil {string} The URL for the post the notification is for
          */
         url() {
-            const value = utils.mapGet(this, 'url');
-            return Promise.resolve(`${forum.url}/${value}`);
+            return Promise.resolve('');
         }
 
         /**
@@ -214,7 +208,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @fulfill {Post} the Post the notification refers to
          */
         getPost() {
-            return forum.Post.get(this.postId);
+            return Promise.reject("Not yet implemented")
         }
 
         /**
@@ -228,7 +222,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @fulfill {Topic} the Topic the notification refers to
          */
         getTopic() {
-            return forum.Topic.get(this.topicId);
+           return Promise.reject("Not yet implemented");
         }
 
         /**
@@ -242,7 +236,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @fulfill {Post} the User who generated this notification
          */
         getUser() {
-            return forum.User.get(this.userId);
+            return forum.User.getByName(this._user);
         }
 
         /**
@@ -291,8 +285,9 @@ exports.bindNotification = function bindNotification(forum) {
          * Listen for new notifications and process ones that arrive
          */
         static activate() {
-            forum.socket.on('message', notifyHandler);
+            forum.Slack.on('message', notifyHandler);
             forum.emit('log', 'Notifications Activated: Now listening for new notifications');
+            return Promise.resolve();
         }
 
         /**
@@ -301,8 +296,9 @@ exports.bindNotification = function bindNotification(forum) {
          * Stop listening for new notifcations.
          */
         static deactivate() {
-            forum.socket.off('message', notifyHandler);
+            forum.Slack.off('message', notifyHandler);
             forum.emit('log', 'Notifications Deactivated: No longer listening for new notifications');
+            return Promise.resolve();
         }
     }
 
@@ -318,7 +314,9 @@ exports.bindNotification = function bindNotification(forum) {
      */
     function notifyHandler(data) {
         //Filter unwanted types; slack is noisy
-        if (mappedTypes.indexOf(parseJSON(data).type) > -1) {
+        console.log(data);
+        if (mappedTypes.indexOf(data.type) > -1) {
+            debug('Received message');
             const notification = Notification.parse(data);
             debug(`Notification ${notification.id}: ${notification.label} received`);
             forum.emit(`notification:${notification.type}`, notification);
