@@ -9,10 +9,10 @@
 
 const EventEmitter = require('events').EventEmitter;
 const SlackBot = require('slackbots');
-const io = require('socket.io-client');
-const userModule = require('./User');
 const debug = require('debug')('sockbot:providers:slack');
 const notifications = require('./Notifications');
+const posts = require('./Post');
+const users = require('./User');
 
 
 /**
@@ -35,8 +35,9 @@ class Forum extends EventEmitter {
         super();
     	this._config = config;
     	this._plugins = [];
-    	this._userModule = userModule.bindUser(this);
     	this._notification = notifications.bindNotification(this);
+    	this.Post = posts.bindPost(this);
+    	this.User = users.bindUser(this);
     }
 
     get Slack() {
@@ -92,17 +93,18 @@ class Forum extends EventEmitter {
     get username() {
         return this._config.core.username;
     }
-
+    
      /**
-     * Logged in Bot User
+     * Username bot will log in as
      *
      * @public
      *
-     * @type {User}
+     * @type{string}
      */
-    get user() {
-        return this._userModule;
+    get userId() {
+        return this._userId;
     }
+
 
     /**
      * Bot instance Owner user
@@ -155,7 +157,14 @@ class Forum extends EventEmitter {
                 name: that._config.core.username
             });
             
-            that._slack.on('start', resolve);
+            that._slack.on('start', function() {
+                that.User.getByName(that._config.core.username).then((me) => {
+                    debug(me);
+                    that._userId = me.id;
+                    debug('Started with ID:' + that._userId);
+                    resolve();
+                });
+            });
         });
     }
 

@@ -37,11 +37,10 @@ exports.bindUser = function bindUser(forum) {
          * @param {*} payload Payload to construct the User object out of
          */
         constructor(payload) {
-            payload = JSON.parse(payload);
-            	this._id = payload.id;
-            	this._username = payload.name;
-            	this._name = payload.profile.real_name;
-            	this._email = payload.profile.email;
+        	this._id = payload.id;
+        	this._username = payload.name;
+        	this._name = payload.real_name;
+        	this._email = payload.profile.email;
         }
 
         /**
@@ -203,17 +202,13 @@ exports.bindUser = function bindUser(forum) {
          *
          */
         static get(userId) {
-            return new Promise((resolve, reject) => {
-            	forum.Slack.api("users.info", {
+            debug(`retrieving user by id ${userId}`);
+            return forum.Slack._api("users.info", {
             		user: userId
-	            }, function(err, response) {
-	            	if (err) {
-	            		reject(err);
-	            	} else {
-	            		resolve(new User(response.user));
-	            	}
+	            }).then(function(response) {
+	                debug(`${userId} resolved to ${response.user.name}`);
+	            	return new User(response.user);
 				});
-            });
         }
 
          /**
@@ -232,21 +227,9 @@ exports.bindUser = function bindUser(forum) {
          */
         static getByName(username) {
             debug(`retrieving user by login ${username}`);
-            return new Promise((resolve, reject) => {
-	           	forum.Slack.api("users.list", function(err, response) {
-	           		if (err) {
-	            		reject(err);
-	            	} else {
-	            		let members = JSON.parse(response).members;
-	            		for (let i = 0; i < members.length; i++) {
-	            			if (members[i].name == username) {
-	            				resolve(new User(members[i]));
-	            			}
-	            		}
-	            		reject("No such user");
-	            	}
-	           	});
-	        });
+            return forum.Slack.getUser(username).then((user) => {
+                return new User(user);
+            });
         }
 
         /**

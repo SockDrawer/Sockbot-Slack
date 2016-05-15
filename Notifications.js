@@ -50,9 +50,16 @@ exports.bindNotification = function bindNotification(forum) {
          * @param {*} payload Payload to construct the Notification object out of
          */
         constructor(payload) {
+            /* Type checking*/
+            if (payload.text.indexOf('@' + forum.userId) > -1) {
+                this._type = notificationType.mention;
+            } else {
+                this._type = notificationType.notification;
+            }
             this._body = payload.text;
-            this._type = 'message';
             this._user = payload.user;
+            this._date = payload.ts;
+            this._post = forum.Post.parse(payload);
             
         }
 
@@ -86,7 +93,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {number}
          */
         get topicId() {
-            return 0;
+            return this._post.topicId;
         }
 
         /**
@@ -97,7 +104,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {number}
          */
         get userId() {
-            return 0;
+            return this._user;
         }
 
         /**
@@ -141,7 +148,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {Date}
          */
         get date() {
-            return 0;
+            return this._ts;
         }
 
         /**
@@ -177,9 +184,6 @@ exports.bindNotification = function bindNotification(forum) {
          * @fulfill the Notification markup
          */
         getText() {
-            if (this.type === 'mention') {
-                return forum.Post.preview(this._body);
-            }
             return Promise.resolve(this._body);
         }
 
@@ -208,7 +212,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @fulfill {Post} the Post the notification refers to
          */
         getPost() {
-            return Promise.reject("Not yet implemented")
+            return this._post;
         }
 
         /**
@@ -236,7 +240,8 @@ exports.bindNotification = function bindNotification(forum) {
          * @fulfill {Post} the User who generated this notification
          */
         getUser() {
-            return forum.User.getByName(this._user);
+            //return forum.User.getByName(this._user);
+            return forum.User.get(this._user);
         }
 
         /**
@@ -318,7 +323,7 @@ exports.bindNotification = function bindNotification(forum) {
         if (mappedTypes.indexOf(data.type) > -1) {
             debug('Received message');
             const notification = Notification.parse(data);
-            debug(`Notification ${notification.id}: ${notification.label} received`);
+            debug(`Notification ${notification.type}: ${notification.body} received`);
             forum.emit(`notification:${notification.type}`, notification);
             forum.emit('notification', notification);
             const ids = {
