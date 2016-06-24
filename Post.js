@@ -7,6 +7,11 @@
  */
 
  const debug = require('debug')('sockbot:providers:slack:posts');
+ const uuid = require('node-uuid');
+ const loki = require('lokijs');
+ 
+ const db = new loki('post_history.json');
+ const postHistory = db.addCollection('postHistory');
 
 
 /**
@@ -320,7 +325,7 @@ exports.bindPost = function bindPost(forum) {
             return new Post(payload);
         }
         
-                /**
+         /**
          * Render the content to HTML as it would be rendered for a post
          *
          * @public
@@ -336,6 +341,15 @@ exports.bindPost = function bindPost(forum) {
          */
         static preview(content) {
             return content;
+        }
+        
+        static get(id) {
+            return postHistory.get(id);
+        }
+        
+        static save(post) {
+            post = postHistory.insert(post);
+            return post.$loki;
         }
 
     }

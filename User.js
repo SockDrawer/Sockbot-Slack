@@ -53,6 +53,17 @@ exports.bindUser = function bindUser(forum) {
         get id() {
             return this._id;
         }
+        
+         /**
+         * Descriptive name of the User
+         *
+         * @public
+         *
+         * @type {?string}
+         */
+        get name() {
+            return this._name;
+        }
 
         /**
          * Username of the User

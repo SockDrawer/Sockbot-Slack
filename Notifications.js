@@ -326,8 +326,10 @@ exports.bindNotification = function bindNotification(forum) {
             debug(`Notification ${notification.type}: ${notification.body} received`);
             forum.emit(`notification:${notification.type}`, notification);
             forum.emit('notification', notification);
+            
+            const postId = forum.Post.save(notification._post);
             const ids = {
-                post: notification.postId,
+                post: postId,
                 topic: notification.topicId,
                 user: notification.userId,
                 room: -1
