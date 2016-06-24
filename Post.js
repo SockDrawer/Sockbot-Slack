@@ -7,7 +7,6 @@
  */
 
  const debug = require('debug')('sockbot:providers:slack:posts');
- const uuid = require('node-uuid');
  const loki = require('lokijs');
  
  const db = new loki('post_history.json');
