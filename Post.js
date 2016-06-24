@@ -346,6 +346,10 @@ exports.bindPost = function bindPost(forum) {
             return postHistory.get(id);
         }
         
+        get(id) {
+            return postHistory.get(id);
+        }
+        
         static save(post) {
             post = postHistory.insert(post);
             return post.$loki;
