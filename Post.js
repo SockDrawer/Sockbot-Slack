@@ -343,11 +343,13 @@ exports.bindPost = function bindPost(forum) {
         }
         
         static get(id) {
-            return postHistory.get(id);
+            let post = postHistory.get(id);
+            return post ? Promise.resolve(post) : Promise.reject('No post found');
         }
         
         get(id) {
-            return postHistory.get(id);
+            let post = postHistory.get(id);
+            return post ? Promise.resolve(post) : Promise.reject('No post found');
         }
         
         static save(post) {
