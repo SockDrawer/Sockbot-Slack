@@ -4,7 +4,9 @@
   "description": "A Slack provider for Sockbot",
   "main": "index.js",
   "scripts": {
-    "test": "echo Not yet implemented"
+    "test": "echo Not yet implemented",
+    "publish-please": "publish-please",
+    "prepublish": "publish-please guard"
   },
   "keywords": [
     "Sockbot"
