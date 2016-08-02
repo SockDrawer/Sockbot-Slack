@@ -1,7 +1,7 @@
 {
   "name": "sockbot-slack",
   "version": "1.0.0",
-  "description": "A Slack providor for Sockbot",
+  "description": "A Slack provider for Sockbot",
   "main": "index.js",
   "scripts": {
     "test": "echo Not yet implemented"
