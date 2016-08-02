@@ -1,3 +1,5 @@
+'use strict';
+
 const formatter = {
     urlForPost: () => {
         return '';

@@ -220,7 +220,7 @@ class Forum extends EventEmitter {
      * @returns {Promise} Resolves when all plugins have been enabled
      */
     activate() {
-        return this._notification.activate().then(() => {
+        return this.Notification.activate().then(() => {
             return Promise.all(this._plugins.map((plugin) => plugin.activate()));
         });
 
