@@ -318,7 +318,6 @@ exports.bindNotification = function bindNotification(forum) {
      */
     function notifyHandler(data) {
         //Filter unwanted types; slack is noisy
-        console.log(data);
         if (mappedTypes.indexOf(data.type) > -1) {
             debug('Received message');
             const notification = Notification.parse(data);

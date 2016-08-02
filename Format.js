@@ -12,8 +12,8 @@ const formatter = {
     quoteText: (text) => {
         let lines = text.split('\n');
         let output;
-        for (let line in lines) {
-            output += '> ' + line;
+        for (let i = 0; i < lines.length; i++) {
+            output += '> ' + lines[i] + '\n';
         }
         
         return output;
