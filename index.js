@@ -12,8 +12,9 @@ const SlackBot = require('slackbots');
 const debug = require('debug')('sockbot:providers:slack');
 const notifications = require('./Notifications');
 const posts = require('./Post');
+const topics = require('./Topic');
 const users = require('./User');
-
+const formatter = require('./Format');
 
 /**
  * Forum connector
@@ -35,9 +36,11 @@ class Forum extends EventEmitter {
         super();
     	this._config = config;
     	this._plugins = [];
-    	this._notification = notifications.bindNotification(this);
+    	this.Notification = notifications.bindNotification(this);
     	this.Post = posts.bindPost(this);
+    	this.Topic = topics.bindTopic(this);
     	this.User = users.bindUser(this);
+    	this.Format = formatter;
     }
 
     get Slack() {
@@ -138,7 +141,16 @@ class Forum extends EventEmitter {
     set Commands(commands) {
         this._commands = commands;
     }
+    
+    /* Things that are not things */
+    
+    get Category() {
+        throw new Error('Not supported by this provider');
+    }
 
+    get Chat() {
+        throw new Error('Not supported by this provider');
+    }
 
     /**
      * Login to forum instance

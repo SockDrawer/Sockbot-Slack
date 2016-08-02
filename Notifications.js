@@ -82,7 +82,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {number}
          */
         get postId() {
-            return 0;
+            return this._post.id;
         }
 
         /**
@@ -159,7 +159,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {string}
          */
         get label() {
-            return 0;
+            return '';
         }
 
         /**
@@ -198,7 +198,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @fullfil {string} The URL for the post the notification is for
          */
         url() {
-            return Promise.resolve('');
+            return Promise.reject('No can do');
         }
 
         /**
@@ -240,7 +240,6 @@ exports.bindNotification = function bindNotification(forum) {
          * @fulfill {Post} the User who generated this notification
          */
         getUser() {
-            //return forum.User.getByName(this._user);
             return forum.User.get(this._user);
         }
 

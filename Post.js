@@ -69,22 +69,6 @@ exports.bindPost = function bindPost(forum) {
         }
 
         /**
-         * Retrieve the HTML representation of the raw content of the post
-         *
-         * @public
-         *
-         * @returns {Promise<string>} Resolves to the HTML markup for the post
-         *
-         * @promise
-         * @fulfill {string} The HTML markup for this post
-         * @reject {Error} An Error that occured while deleting
-         */
-        markup() {
-            return this._content;
-        }
-        
-
-        /**
          * DateTime that the post was posted
          *
          * @public
@@ -115,6 +99,22 @@ exports.bindPost = function bindPost(forum) {
          */
         get topicId() {
             return this._topicId;
+        }
+        
+        
+        /**
+         * Retrieve the HTML representation of the raw content of the post
+         *
+         * @public
+         *
+         * @returns {Promise<string>} Resolves to the HTML markup for the post
+         *
+         * @promise
+         * @fulfill {string} The HTML markup for this post
+         * @reject {Error} An Error that occured while deleting
+         */
+        markup() {
+            return this._content;
         }
 
         /**
