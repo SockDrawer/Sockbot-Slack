@@ -234,7 +234,30 @@ class Forum extends EventEmitter {
     deactivate() {
         return Promise.reject("not yet implemented");
     }
+    
+    supports(supportString) {
+        const supported = [
+            'Users',
+            'Posts',
+            'Topics', 'Topics.Watch', 'Topics.Mute',
+            'Notifications',
+            'Formatting', 'Formatting.Markup', 'Formatting.Markup.Markdown'
+        ];
 
-
+        let support = false;
+        
+        if (Array.isArray(supportString)) {
+            support = supportString.reduce((value, item) => { 
+                return value && this.supports(item);
+            }, true);
+            return support;
+        }
+        
+        if (supported.indexOf(supportString) > -1) {
+            support = true;
+        }
+ 
+        return support;
+    }
 }
 module.exports = Forum;
