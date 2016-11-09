@@ -165,7 +165,14 @@ exports.bindPost = function bindPost(forum) {
          */
         static reply(topicId, postId, content) {
             debug('sending reply: ' + content + ' to ' + topicId);
-            return forum.Slack.postMessage(topicId, content);
+            return forum.Slack.postMessage(topicId, content)
+                .catch((err) => {
+                if (err.message === 'no_text') {
+                    return Promise.resolve();
+                } else {
+                    Promise.reject(new Error(err.message));
+                }
+            });
         }
 
         /**
