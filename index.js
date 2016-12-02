@@ -241,7 +241,9 @@ class Forum extends EventEmitter {
             'Posts',
             'Topics', 'Topics.Watch', 'Topics.Mute',
             'Notifications',
-            'Formatting', 'Formatting.Markup', 'Formatting.Markup.Markdown'
+            'Formatting', 'Formatting.Markup', 'Formatting.Markup.Markdown', 
+            'Formatting.Links', 'Formatting.Images', 'Formatting.Spoilers',
+            'Formatting.Preformat', 'Formatting.Strikethrough', 'Formatting.List'
         ];
 
         let support = false;
