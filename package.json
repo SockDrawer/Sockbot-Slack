@@ -2,9 +2,9 @@
   "name": "sockbot-slack",
   "version": "1.0.0",
   "description": "A Slack provider for Sockbot",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo Not yet implemented",
+    "test": "mocha test/*.js",
     "publish-please": "publish-please",
     "prepublish": "publish-please guard"
   },
@@ -19,5 +19,11 @@
     "slack-node": "^0.2.0",
     "slackbots": "^0.5.1",
     "socket.io-client": "^1.4.6"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "chai-string": "^1.3.0",
+    "mocha": "^3.2.0"
   }
 }
