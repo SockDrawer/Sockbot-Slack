@@ -5,6 +5,7 @@ node_js:
 - '6.2'
 - '6.3'
 before_script:
+- npm install publish-please 
 - npm prune
 - rm -rf ./coverage
 script:
