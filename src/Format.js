@@ -16,13 +16,10 @@ const formatter = {
      * @returns {string} quoted text
      */
     quoteText: (text) => {
-        let lines = text.split('\n');
-        let output;
-        for (let i = 0; i < lines.length; i++) {
-            output += '> ' + lines[i] + '\n';
+        if (text.indexOf('\n') > -1) {
+            return `>>>${text}`;
         }
-        
-        return output;
+        return `>${text}`;
     },
     
      /**
