@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+- node
+- '4'
+- '6.2'
+- '6.3'
+before_install:
+- npm install publish-please 
+before_script:
+- npm prune
+- rm -rf ./coverage
+script:
+- npm test
+notifications:
+  slack:
+    secure: zY+ziJxR3LLY80qDw58RKPo3DuyonL3iCkx6rFOJB3QxB7GHuPvd0aT5Ul7xkdErYj7OZWg0v7ua+BfUYKmQd9rwhqfrfqxQ9I21KlOt+NkzuYcWaX8ZAiEEtU69q8qhN2yHWW6i9anb+NxRQj570dbsuU/GcixUVYbIqhd+DHtpR6t2fAmY4m+NTeaIG+CrXdbryAAvZbJW/YSIeNW8vz7A17WzcrqwFMR3glyoqxh4RHHj0WYvWGr6a03Q5l1Lu+cG2S7mBT5s2AdJMRx9JrZSN0SgAA83slIFQz6rDdDOUsZq+ouXiQT5XEEVXzAhrfESfZoFA+cTjq+JGP8sZbWNYEM/3rZ8/gy/k2UmzS7y5QZRb0/u6rr3UIWrGGnm3n8BOi1S7vn3spTZrQEEkLb58CwywgBr4btlcOhiI2l+Iw/Z40fL9WAqFmhCjfTiDvwsHC5O4tVOAyqsrunACCN3u99+ZA+0EEmumD6yEYRZRSd0oq583h5oO0GpSoO5JCpY4zDeuySwzso2j3mpFwZinqBNHBNFE1XNr/ycIaA6+Mlcf5J0bew88IX96Pug+3vp1Omw6Pa32I43vmxMiaOb5Y6MfrWmzEUc/rux4mfAyMYeZ56sm2699I/BL5gL+afF0Bme/wVqdrZqsMd8zbhTf3+Tz/c2H2dedEhlg/w=
