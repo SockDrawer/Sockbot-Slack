@@ -50,7 +50,6 @@ exports.bindNotification = function bindNotification(forum) {
          * @param {*} payload Payload to construct the Notification object out of
          */
         constructor(payload) {
-            debug(payload)
             /* Type checking*/
             if (payload.text.indexOf('@' + forum.userId) > -1) {
                 this._type = notificationType.mention;
