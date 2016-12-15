@@ -290,7 +290,7 @@ exports.bindTopic = function bindTopic(forum) {
          * @static
          * @public
          *
-         * @param {!number} topicId Id of topic to retrieve
+         * @param {String} topicId Id of topic/channel to retrieve
          * @returns {Promise<Topic>} Retrieved topic
          *
          * @promise
@@ -298,7 +298,29 @@ exports.bindTopic = function bindTopic(forum) {
          * @reject {Error} An Error that occured while posting
          */
         static get(topicId) {
-            return forum.Slack.getChannel(topicId).then(Topic.parse);
+            debug(`getting topic ${topicId}`);
+            return forum.Slack.getChannelById(topicId).then((response) => {
+                debug(response);
+                return Topic.parse(response);
+            });
+        }
+        
+        /**
+         * Retrieve a topic by topic name
+         *
+         * @static
+         * @public
+         *
+         * @param {String} channelName The human-friendly name of the channel
+         * @returns {Promise<Topic>} Retrieved topic
+         *
+         * @promise
+         * @fulfill {Topic} Retrieved Topic
+         * @reject {Error} An Error that occured while posting
+         */
+        static getByName(channelName) {
+            debug(`getting channel ${channelName}`);
+            return forum.Slack.getChannel(channelName).then(Topic.parse);
         }
 
         /**
