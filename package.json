@@ -4,9 +4,7 @@
   "description": "A Slack provider for Sockbot",
   "main": "index.js",
   "scripts": {
-    "test": "echo Not yet implemented",
-    "publish-please": "publish-please",
-    "prepublish": "publish-please guard"
+    "test": "echo Not yet implemented"
   },
   "keywords": [
     "Sockbot"
@@ -19,5 +17,14 @@
     "slack-node": "^0.2.0",
     "slackbots": "^0.5.1",
     "socket.io-client": "^1.4.6"
+  },
+  "devDependencies": {
+    "semantic-release": "^6.3.2",
+    "@yamikuronue/commit-analyzer": "yamikuronue/commit-analyzer",
+    "@yamikuronue/release-notes-generator": "yamikuronue/release-notes-generator"
+  },
+  "release": {
+    "analyzeCommits": "./node_modules/@yamikuronue/commit-analyzer",
+    "generateNotes": "./node_modules/@yamikuronue/release-notes-generator"
   }
 }
