@@ -54,7 +54,7 @@ exports.bindNotification = function bindNotification(forum) {
             if (payload.text.indexOf('@' + forum.userId) > -1) {
                 this._type = notificationType.mention;
             } else {
-                this._type = notificationType.notification;
+                this._type = notificationType.message;
             }
             this._body = payload.text;
             this._user = payload.user || payload.bot_id;
