@@ -259,11 +259,12 @@ exports.bindTopic = function bindTopic(forum) {
         }
         
         join() {
+            const name = this._name;
             return forum.Slack._api("channels.join", {
-            		name: this._name
+            		name: name
 	            }).then(function(response) {
 	                if (response.ok === true) {
-	                    debug(`Joined channel ${this._name}`);
+	                    debug(`Joined channel ${name}`);
 	                    return true;
 	                } else {
 	                    throw new Error(response.ok);
@@ -272,11 +273,12 @@ exports.bindTopic = function bindTopic(forum) {
         }
         
         part() {
+            const name = this._name;
             return forum.Slack._api("channels.leave", {
-            		name: this._name
+            		name: name
 	            }).then(function(response) {
 	                if (response.ok === true) {
-	                    debug(`Left channel ${this._name}`);
+	                    debug(`Left channel ${name}`);
 	                    return true;
 	                } else {
 	                    throw new Error(response.ok);
@@ -311,73 +313,6 @@ exports.bindTopic = function bindTopic(forum) {
          */
         static parse(payload) {
             return new Topic(payload);
-        }
-
-        /**
-         * @typedef {TopicExtended}
-         * @prop {Topic} topic Topic data
-         * @prop {User} user User data
-         * @prop {Category} category Category data
-         */
-
-        /**
-         * Parse a topic with embedded user and category information into respective objects
-         *
-         * @public
-         *
-         * @param {*} data Data to parse into a topic
-         * @returns {Promise<TopicExtended>} Parsed Results
-         *
-         * @promise
-         * @fulfill {TopicExtended} Parsed topic data
-         */
-        static parseExtended(data) {
-            const topic = forum.Topic.parse(data);
-            const user = forum.User.parse(data.user);
-            const category = forum.Category.parse(data.category);
-            return Promise.resolve({
-                topic: topic,
-                user: user,
-                category: category
-            });
-        }
-
-        /**
-         * Proccess a Topic
-         *
-         * @typedef {TopicProcessor}
-         * @function
-         *
-         * @param {Topic} topic Topic to process
-         * @param {User} user User who started `topic`
-         * @param {Category} category Category `topic` is contained in
-         * @returns {Promise} A promise that fulfills when processing is complete
-         */
-
-        /**
-         * Get All Unread Topics
-         *
-         * @public
-         *
-         * @param {TopicProcessor} eachTopic A function to process each retrieved topic
-         * @returns {Promise} A promise that resolves when all topics have been processed
-         */
-        static getUnreadTopics(eachTopic) {
-            return Topic._getMany('topics.loadMoreUnreadTopics', {}, eachTopic);
-        }
-
-        /**
-         * Get All Topics in order of most recent activity
-         *
-         * @public
-         *
-         * @param {TopicProcessor} eachTopic A function to process each retrieved topic
-         * @returns {Promise} A promise that resolves when all topics have been processed
-         */
-        static getRecentTopics(eachTopic) {
-            return Topic._getMany('topics.loadMoreFromSet', {
-                set: 'topics:recent'
-            }, eachTopic);
         }
     }
     return Topic;
