@@ -4,7 +4,7 @@
   "description": "A Slack provider for Sockbot",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha test/*.js",
+    "test": "istanbul cover node_modules/mocha/bin/_mocha -- test/*.js",
     "publish-please": "publish-please",
     "prepublish": "publish-please guard"
   },
@@ -24,6 +24,7 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "chai-string": "^1.3.0",
+    "istanbul": "^0.4.5",
     "mocha": "^3.2.0",
     "sinon": "^1.17.6",
     "sinon-as-promised": "^4.0.2",
