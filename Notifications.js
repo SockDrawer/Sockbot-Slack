@@ -148,7 +148,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @type {Date}
          */
         get date() {
-            return this._ts;
+            return this._date;
         }
 
         /**
