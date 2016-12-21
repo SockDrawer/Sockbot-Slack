@@ -54,10 +54,10 @@ exports.bindNotification = function bindNotification(forum) {
             if (payload.text && payload.text.indexOf('@' + forum.userId) > -1) {
                 this._type = notificationType.mention;
             } else {
-                this._type = notificationType.notification;
+                this._type = notificationType.message;
             }
             this._body = payload.text;
-            this._user = payload.user;
+            this._user = payload.user || payload.bot_id;
             this._date = payload.ts;
             this._post = forum.Post.parse(payload);
             
@@ -332,6 +332,7 @@ exports.bindNotification = function bindNotification(forum) {
                 user: notification.userId,
                 room: -1
             };
+            debug(ids);
             return notification.getText()
                 .then((postData) => forum.Commands.get(ids,
                     postData, (content) => forum.Post.reply(notification.topicId, notification.postId, content)))
