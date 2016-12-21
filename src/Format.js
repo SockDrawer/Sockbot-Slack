@@ -16,13 +16,10 @@ const formatter = {
      * @returns {string} quoted text
      */
     quoteText: (text) => {
-        let lines = text.split('\n');
-        let output;
-        for (let i = 0; i < lines.length; i++) {
-            output += '> ' + lines[i] + '\n';
+        if (text.indexOf('\n') > -1) {
+            return `>>>${text}`;
         }
-        
-        return output;
+        return `>${text}`;
     },
     
      /**
@@ -53,13 +50,28 @@ const formatter = {
     },
     
     /**
-     * Fails to format text as a spoiler, as slack supports no such thing
+     * Formats a spoiler as rot13, since there's no spoiler format
      *
      * @param {!string} text Input text
-     * @returns {string} The input unchanged
+     * @returns {string} The input as rot13
      */
     spoiler: (input) => {
-        return input;
+        //ROT13 :D
+        let output = input.split('').map((c) => {
+            let codePoint = c.charCodeAt(0);
+            if ((codePoint >= 78 && codePoint <= 90)
+                || (codePoint >= 110 && codePoint <= 122)) {
+                codePoint -= 13;
+            }
+            else if ((codePoint >= 65 && codePoint <= 77)
+                || (codePoint >= 97 && codePoint <= 109)) {
+                codePoint += 13;
+            }
+            
+            return String.fromCharCode(codePoint);
+        }).join('');
+        
+        return `ROT13: ${output}`;
     },
     
     /**
@@ -88,7 +100,7 @@ const formatter = {
      * @param {!string} text Input text
      * @returns {string} Bolded and italiced Text
      */
-    boldItalic: (input) => {
+    bolditalic: (input) => {
         return formatter.bold(formatter.italic(input));
     },
     
@@ -175,7 +187,7 @@ const formatter = {
      * @returns {string} The stricken text
      */
     strikethrough: (text) => {
-        return `~~${text}~~'`;
+        return `~~${text}~~`;
     },
 
     /**
