@@ -26,7 +26,8 @@ describe('providers/nodebb/topic', () => {
             Slack: {
                 postMessage: sinon.stub().resolves(),
                 _api: sinon.stub(),
-                getChannel: sinon.stub()
+                getChannel: sinon.stub(),
+                getChannelById: sinon.stub()
             }
         };
         
@@ -116,14 +117,14 @@ describe('providers/nodebb/topic', () => {
         
         context('static functions', () => {
             it('should provide a getter for topics', () => {
-               forum.Slack.getChannel.resolves({
+               forum.Slack.getChannelById.resolves({
                     creator: 'Arwen',
                     name: 'Yggdrasil',
                     created: new Date().toDateString(),
                     id: 456
                });
                return Topic.get(456).then((t) => {
-                   forum.Slack.getChannel.should.have.been.calledWith(456);
+                   forum.Slack.getChannelById.should.have.been.calledWith(456);
                    t.authorId.should.equal('Arwen');
                    t.title.should.equal('Yggdrasil');
                });

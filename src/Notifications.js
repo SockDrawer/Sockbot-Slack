@@ -24,6 +24,7 @@ exports.bindNotification = function bindNotification(forum) {
      */
     const notificationType = { //eslint-disable-line no-unused-vars
         notification: 'notification',
+        message: 'notification',
         reply: 'reply',
         mention: 'mention'
     };
@@ -60,7 +61,6 @@ exports.bindNotification = function bindNotification(forum) {
             this._user = payload.user || payload.bot_id;
             this._date = payload.ts;
             this._post = forum.Post.parse(payload);
-            
         }
 
         /**
@@ -321,8 +321,8 @@ exports.bindNotification = function bindNotification(forum) {
         if (mappedTypes.indexOf(data.type) > -1) {
             debug('Received message');
             const notification = Notification.parse(data);
-            debug(`Notification ${notification.type}: ${notification.body} received`);
-            forum.emit(`notification:${notification.type}`, notification);
+            debug(`Notification ${notification._type}: ${notification.body} received`);
+            forum.emit(`notification:${notification._type}`, notification);
             forum.emit('notification', notification);
             
             const postId = forum.Post.save(notification._post);

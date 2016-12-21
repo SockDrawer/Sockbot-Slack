@@ -98,6 +98,7 @@ describe('providers/nodebb/notifications', () => {
             let notifyHandler;
             
             before(() => {
+                forum.emit = sinon.stub().resolves();
                 forum.Slack.on = function(_, handler) {
                     notifyHandler = handler;
                 };
@@ -131,6 +132,9 @@ describe('providers/nodebb/notifications', () => {
             it('should emit for known types of messages', () => {
                 sinon.spy(Notification, 'parse');
                 forum.emit.reset();
+                forum.Post.parse.returns({
+                    topicId: 234
+                });
                 
                 return notifyHandler({
                    type: 'message'
@@ -144,6 +148,9 @@ describe('providers/nodebb/notifications', () => {
             
             it('should detect mentions', () => {
                 forum.emit.reset();
+                forum.Post.parse.returns({
+                    topicId: 234
+                });
                 
                 return notifyHandler({
                    type: 'message',
@@ -151,7 +158,6 @@ describe('providers/nodebb/notifications', () => {
                 }).then(() => {
                    forum.emit.should.have.been.calledWith('notification:mention');
                    forum.emit.should.have.been.calledWith('notification');
-                   Notification.parse.restore();
                 });
             });
         });
