@@ -10,15 +10,15 @@ const sinon = require('sinon');
 require('sinon-as-promised');
 chai.use(require('sinon-chai'));
 
-const postModule = require('../src/Topic');
+const topicModule = require('../src/Topic');
 
 describe('providers/nodebb/topic', () => {
-    it('should export bindPost()', () => {
-        postModule.bindTopic.should.be.a('function');
+    it('should export bindTopic()', () => {
+        topicModule.bindTopic.should.be.a('function');
     });
 
     it('should return a class on call to bindTopic()', () => {
-        postModule.bindTopic({}).should.be.a('function');
+        topicModule.bindTopic({}).should.be.a('function');
     });
 
     describe('Topic', () => {
@@ -30,7 +30,7 @@ describe('providers/nodebb/topic', () => {
             }
         };
         
-        const Topic = postModule.bindTopic(forum);
+        const Topic = topicModule.bindTopic(forum);
         let topic;
         
         beforeEach(() => {
