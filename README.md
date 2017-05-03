@@ -1,4 +1,6 @@
 # Sockbot-Slack
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/SockDrawer/Sockbot-Slack.svg)](https://greenkeeper.io/)
 Slack integration for Sockbot
 
 ## Usage
