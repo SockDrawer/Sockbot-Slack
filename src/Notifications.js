@@ -24,6 +24,7 @@ exports.bindNotification = function bindNotification(forum) {
      */
     const notificationType = { //eslint-disable-line no-unused-vars
         notification: 'notification',
+        message: 'notification',
         reply: 'reply',
         mention: 'mention'
     };
@@ -51,7 +52,7 @@ exports.bindNotification = function bindNotification(forum) {
          */
         constructor(payload) {
             /* Type checking*/
-            if (payload.text.indexOf('@' + forum.userId) > -1) {
+            if (payload.text && payload.text.indexOf('@' + forum.userId) > -1) {
                 this._type = notificationType.mention;
             } else {
                 this._type = notificationType.message;
@@ -60,7 +61,6 @@ exports.bindNotification = function bindNotification(forum) {
             this._user = payload.user || payload.bot_id;
             this._date = payload.ts;
             this._post = forum.Post.parse(payload);
-            
         }
 
         /**
@@ -212,7 +212,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @fulfill {Post} the Post the notification refers to
          */
         getPost() {
-            return this._post;
+            return Promise.resolve(this._post);
         }
 
         /**
@@ -226,7 +226,7 @@ exports.bindNotification = function bindNotification(forum) {
          * @fulfill {Topic} the Topic the notification refers to
          */
         getTopic() {
-           return Promise.reject("Not yet implemented");
+           return forum.Topic.get(this._post.topicId);
         }
 
         /**
@@ -321,8 +321,8 @@ exports.bindNotification = function bindNotification(forum) {
         if (mappedTypes.indexOf(data.type) > -1) {
             debug('Received message');
             const notification = Notification.parse(data);
-            debug(`Notification ${notification.type}: ${notification.body} received`);
-            forum.emit(`notification:${notification.type}`, notification);
+            debug(`Notification ${notification._type}: ${notification.body} received`);
+            forum.emit(`notification:${notification._type}`, notification);
             forum.emit('notification', notification);
             
             const postId = forum.Post.save(notification._post);

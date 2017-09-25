@@ -170,7 +170,7 @@ exports.bindPost = function bindPost(forum) {
                 if (err.message === 'no_text') {
                     return Promise.resolve();
                 } else {
-                    Promise.reject(new Error(err.message));
+                    return Promise.reject(new Error(err.message));
                 }
             });
         }
@@ -328,6 +328,9 @@ exports.bindPost = function bindPost(forum) {
          * @returns {Post} the deserialized Post object
          */
         static parse(payload) {
+            if (!payload) {
+                throw new Error('E_POST_NOT_FOUND');
+            }
             return new Post(payload);
         }
         
@@ -346,7 +349,7 @@ exports.bindPost = function bindPost(forum) {
          *
          */
         static preview(content) {
-            return content;
+            return Promise.resolve(content);
         }
         
         static get(id) {
